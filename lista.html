@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventário Doméstico</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-10 p-5 bg-white shadow-md">
+        <h1 class="text-center text-2xl font-semibold mb-5">Inventário</h1>
+        <form id="itemForm" class="grid grid-cols-2 gap-5 mb-5">
+            <input type="text" placeholder="Nome" id="itemName" class="border p-2 rounded">
+            <input type="text" placeholder="Sala/Área" id="itemArea" class="border p-2 rounded">
+            <input type="text" placeholder="Descrição" id="itemDescription" class="border p-2 rounded">
+            <input type="text" placeholder="Marca/Modelo" id="itemModel" class="border p-2 rounded">
+            <input type="date" id="itemPurchaseDate" class="border p-2 rounded">
+            <input type="number" placeholder="Valor da compra" id="itemValue" class="border p-2 rounded">
+            <input type="text" placeholder="Número de série" id="itemSerialNumber" class="border p-2 rounded">
+
+            <div class="col-span-2">
+                <input type="file" id="imageUpload" name="imageUpload" class="border p-2 rounded">
+            </div>
+
+            <div class="col-span-2 mt-3">
+                <img id="displayImage" src="" alt="Imagem do Item" class="max-w-xs max-h-xs hidden">
+            </div>
+
+            <div class="flex space-x-1 mt-5">
+                <button class="px-4 py-2 bg-green-500 text-white rounded shadow" id="addItemBtn">ADICIONAR</button>
+                <button class="px-4 py-2 bg-blue-500 text-white rounded shadow" id="updateItemBtn">ATUALIZAR</button>
+                <button class="px-4 py-2 bg-red-500 text-white rounded shadow" id="deleteItemBtn">DELETAR</button>
+                <button class="px-4 py-2 bg-indigo-500 text-white rounded shadow" id="loadImageBtn">CARREGAR IMAGEM</button>
+                <button class="px-4 py-2 bg-yellow-500 text-white rounded shadow" id="confirmBtn">CONFIRMAR</button>
+            </div>
+            
+
+        </form>
+
+        <div class="flex justify-between mt-4">
+            <div class="p-3 bg-green-500 text-white rounded">
+                <p class="text-sm">Valor Total de todos os itens</p>
+                <h2 id="totalValue" class="text-xl">R$ 0.00</h2>
+            </div>
+            <div class="p-3 bg-blue-500 text-white rounded">
+                <p class="text-sm">Quantidade total de itens</p>
+                <h2 id="totalItems" class="text-xl">0</h2>
+            </div>
+        </div>
+
+        <div class="mt-5 shadow-lg rounded-lg overflow-hidden max-w-screen-lg mx-auto">
+            <table id="itemTable" class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">#Item</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Nome</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Sala/Área</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Descrição</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Marca/Modelo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Data Da Compra</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Valor Da Compra</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Número De Série</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                <!-- As entradas da tabela vão aqui -->
+                </tbody>
+            </table>
+        </div>
+        
+        
+        
+
+        
+
+  
+
+
+<script>
+    document.getElementById('loadImageBtn').addEventListener('click', function() {
+        const imageInput = document.getElementById('imageUpload');
+        const displayImage = document.getElementById('displayImage');
+        
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+    
+            reader.onload = function(event) {
+                displayImage.src = event.target.result;
+                displayImage.style.display = 'block'; // Mostrar a imagem
+            }
+    
+            reader.readAsDataURL(file);
+        }
+    });
+    
+
+    let selectedRow = null;
+    let totalValue = 0;
+    
+    document.getElementById('itemTable').addEventListener('click', function(e) {
+        const row = e.target.closest('tr');
+        if (row && row !== document.querySelector('#itemTable thead tr')) {
+            selectedRow = row;
+            document.getElementById('itemName').value = row.cells[1].textContent;
+            document.getElementById('itemArea').value = row.cells[2].textContent;
+            document.getElementById('itemDescription').value = row.cells[3].textContent;
+            document.getElementById('itemModel').value = row.cells[4].textContent;
+            document.getElementById('itemPurchaseDate').value = row.cells[2].textContent;
+           
+            // Adicione lógica similar para os outros campos, se necessário...
+        }
+    });
+    
+    document.getElementById('updateItemBtn').addEventListener('click', function() {
+    if (selectedRow) {
+        selectedRow.cells[1].textContent = document.getElementById('itemName').value;
+        selectedRow.cells[2].textContent = document.getElementById('itemArea').value;
+        selectedRow.cells[3].textContent = document.getElementById('itemDescription').value;
+        selectedRow.cells[4].textContent = document.getElementById('itemModel').value;
+        selectedRow.cells[5].textContent = document.getElementById('itemPurchaseDate').value;
+        // E assim por diante para os outros campos...
+    }
+})
+    
+    document.getElementById('deleteItemBtn').addEventListener('click', function() {
+        if (selectedRow) {
+            selectedRow.remove();
+            selectedRow = null;
+            updateSummary();
+        } else {
+            alert('Nenhum item selecionado para exclusão.');
+        }
+    });
+
+    document.getElementById('addItemBtn').addEventListener('click', function(e) {
+    e.preventDefault(); 
+
+    const itemName = document.getElementById('itemName').value;
+    const itemArea = document.getElementById('itemArea').value;
+    const itemDescription = document.getElementById('itemDescription').value;
+    const itemModel = document.getElementById('itemModel').value;
+    const itemPurchaseDate = document.getElementById('itemPurchaseDate').value;
+    const itemSerialNumber = document.getElementById('itemSerialNumber').value;
+    const displayImage = document.getElementById('displayImage').src;
+const itemValue = parseFloat(document.getElementById('itemValue').value) || 0;
+
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td>${tableBody.childElementCount + 1}</td>
+        <td>${itemName}</td>
+        <td>${itemArea}</td>
+        <td>${itemDescription}</td>
+        <td>${itemModel}</td>
+        <td>${itemPurchaseDate}</td>
+        <td>R$ ${itemValue.toFixed(2)}</td>
+        <td>${itemSerialNumber}</td>
+        <td><img src="${displayImage}" alt="Imagem do Item" style="max-width: 50px;"></td>
+    `;
+
+    tableBody.appendChild(row);
+    totalValue += itemValue;
+    updateSummary();
+
+    // Limpa os campos após adicionar
+    form.reset();
+});
+    
+
+    function updateSummary() {
+        document.getElementById('totalValue').textContent = "R$ " + totalValue.toFixed(2);
+        document.getElementById('totalItems').textContent = tableBody.childElementCount;
+    }
+
+    const form = document.getElementById('itemForm');
+    const tableBody = document.querySelector('#itemTable tbody');
+    
+    
+
+    </script>
+    </body>
+    
+    </html>
+    

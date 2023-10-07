@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Inventário</h1>
+
+    <form id="inventoryForm">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="name" required>
+            <button type="button" class="btn btn-primary mt-2" onclick="addItem()">Adicionar</button>
+        </div>
+
+        <div class="mb-3">
+            <label for="area" class="form-label">Sala/Área</label>
+            <input type="text" class="form-control" id="area" required>
+            <button type="button" class="btn btn-primary mt-2" onclick="updateItem()">Atualizar</button>
+        </div>
+
+        <!-- Adicione campos adicionais semelhantes... -->
+
+        <div class="mb-3">
+            <label for="itemImage" class="form-label">Imagem do Item</label>
+            <input type="file" class="form-control" id="itemImage" required>
+            <button type="button" class="btn btn-primary mt-2" onclick="loadImage()">Carregar</button>
+            <button type="button" class="btn btn-secondary mt-2" onclick="viewItem()">Ver Item</button>
+        </div>
+
+        <button type="submit" class="btn btn-success">Confirmar</button>
+    </form>
+
+    <table class="table mt-5">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Nome</th>
+                <th>Sala/Área</th>
+                <!-- Outras colunas... -->
+            </tr>
+        </thead>
+        <tbody id="inventoryTable">
+            <!-- Os itens serão inseridos aqui -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function addItem() {
+        const itemName = document.getElementById('name').value;
+        let items = JSON.parse(localStorage.getItem('inventory')) || [];
+        items.push({ name: itemName });
+        localStorage.setItem('inventory', JSON.stringify(items));
+        loadTableData();
+    }
+
+    function loadTableData() {
+        const items = JSON.parse(localStorage.getItem('inventory')) || [];
+        const tableBody = document.getElementById('inventoryTable');
+        tableBody.innerHTML = '';
+        items.forEach(item => {
+            let row = tableBody.insertRow();
+            let cell1 = row.insertCell(0);
+            let cell2 = row.insertCell(1);
+            // Adicione mais células conforme necessário
+            cell1.textContent = item.name;
+            cell2.textContent = item.area;
+            // E assim por diante...
+        });
+    }
+
+    // Adicione as outras funções conforme necessário...
+
+    document.addEventListener('DOMContentLoaded', loadTableData);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventário Doméstico</title>
+
+    <!-- Bootstrap e Tailwind CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 p-6">
+
+    <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl mb-6">Inventário Doméstico</h1>
+
+        <form id="inventoryForm">
+            <input type="hidden" id="editIndex" value="-1">
+
+            <div class="mb-4">
+                <label for="nome" class="block text-sm font-medium text-gray-700">Nome:</label>
+                <input type="text" id="nome" class="mt-1 form-input w-full">
+            </div>
+
+            <div class="mb-4">
+                <label for="sala" class="block text-sm font-medium text-gray-700">Sala/Área:</label>
+                <input type="text" id="sala" class="mt-1 form-input w-full">
+            </div>
+
+            <div class="mb-4">
+                <button type="submit" class="btn btn-primary">Adicionar</button>
+                <button type="button" id="updateBtn" class="ml-2 btn btn-secondary d-none">Atualizar</button>
+                <button type="button" id="cancelBtn" class="ml-2 btn btn-danger d-none">Cancelar</button>
+            </div>
+        </form>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Sala/Área</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryTable">
+            </tbody>
+        </table>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const items = [];
+        
+        document.getElementById('inventoryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const sala = document.getElementById('sala').value;
+            const editIndex = document.getElementById('editIndex').value;
+
+            if (editIndex === "-1") {
+                items.push({ nome, sala });
+            } else {
+                items[editIndex] = { nome, sala };
+                document.getElementById('editIndex').value = "-1";
+                document.getElementById('updateBtn').classList.add('d-none');
+                document.getElementById('cancelBtn').classList.add('d-none');
+            }
+            
+            displayItems();
+
+            document.getElementById('nome').value = "";
+            document.getElementById('sala').value = "";
+        });
+
+        function displayItems() {
+            const tbody = document.getElementById('inventoryTable');
+            tbody.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${item.nome}</td>
+                    <td>${item.sala}</td>
+                    <td>
+                        <button onclick="editItem(${index})" class="btn btn-warning btn-sm">Editar</button>
+                        <button onclick="deleteItem(${index})" class="btn btn-danger btn-sm">Deletar</button>
+                    </td>`;
+                tbody.appendChild(newRow);
+            });
+        }
+
+        function editItem(index) {
+            const item = items[index];
+
+            document.getElementById('nome').value = item.nome;
+            document.getElementById('sala').value = item.sala;
+            document.getElementById('editIndex').value = index;
+
+            document.getElementById('updateBtn').classList.remove('d-none');
+            document.getElementById('cancelBtn').classList.remove('d-none');
+        }
+
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('nome').value = "";
+            document.getElementById('sala').value = "";
+            document.getElementById('updateBtn').classList.add('d-none');
+            document.getElementById('cancelBtn').classList.add('d-none');
+        });
+
+        function deleteItem(index) {
+            if (confirm('Você tem certeza que deseja deletar este item?')) {
+                items.splice(index, 1);
+                displayItems();
+            }
+        }
+    </script>
+
+</body>
+
+</html>
